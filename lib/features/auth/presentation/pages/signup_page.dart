@@ -32,9 +32,9 @@ class _SignUpPageState extends State<SignUpPage> {
           if (state is Authenticated) {
             context.go('/');
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
@@ -46,17 +46,34 @@ class _SignUpPageState extends State<SignUpPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("Hey there,",style: AppTextStyle.bodyLarge,),
-                SizedBox(height: 15,),
-                Text("Create an Account",style: AppTextStyle.h2.copyWith(fontWeight: FontWeight.bold),),
-                SizedBox(height: 35,),
-                AuthTextField(label: "First Name", controller: _firstNameController,),
-                SizedBox(height: 20,),
-                AuthTextField(label: "Last Name", controller: _lastNameController),
-                SizedBox(height: 20,),
-                AuthTextField(label: "Email", controller: _emailController,prefixIcon: Icon(Icons.email_outlined),),
-                SizedBox(height: 20,),
-                AuthTextField(label: "Password", controller: _passwordController,prefixIcon: Icon(Icons.lock_outline),),
+                Text("Hey there,", style: AppTextStyle.bodyLarge),
+                SizedBox(height: 15),
+                Text(
+                  "Create an Account",
+                  style: AppTextStyle.h2.copyWith(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 35),
+                AuthTextField(
+                  hintText: "First Name",
+                  controller: _firstNameController,
+                ),
+                SizedBox(height: 20),
+                AuthTextField(
+                  hintText: "Last Name",
+                  controller: _lastNameController,
+                ),
+                SizedBox(height: 20),
+                AuthTextField(
+                  hintText: "Email",
+                  controller: _emailController,
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+                SizedBox(height: 20),
+                AuthTextField(
+                  hintText: "Password",
+                  controller: _passwordController,
+                  prefixIcon: Icon(Icons.lock_outline),
+                ),
                 // TextField(
                 //   controller: _emailController,
                 //   decoration: const InputDecoration(labelText: 'Email'),
@@ -67,14 +84,17 @@ class _SignUpPageState extends State<SignUpPage> {
                 //   obscureText: true,
                 // ),
                 const SizedBox(height: 70),
-                AppButton(labelText: "Register",onPressed: (){
-                  context.read<AuthBloc>().add(
-                    SignUpEvent(
-                      email: _emailController.text,
-                      password: _passwordController.text,
-                    ),
-                  );
-                },),
+                AppButton(
+                  labelText: "Register",
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                      SignUpEvent(
+                        email: _emailController.text,
+                        password: _passwordController.text,
+                      ),
+                    );
+                  },
+                ),
                 // ElevatedButton(
                 //   onPressed: () {
                 //     context.read<AuthBloc>().add(
@@ -86,12 +106,17 @@ class _SignUpPageState extends State<SignUpPage> {
                 //   },
                 //   child: const Text('Sign Up'),
                 // ),
-                SizedBox(height: 15,),
+                SizedBox(height: 15),
                 TextButton(
                   onPressed: () {
                     context.go('/signin');
                   },
-                  child: Text('Already have an account? Sign in',style: AppTextStyle.bodySmall.copyWith(color: AppPallete.black),)
+                  child: Text(
+                    'Already have an account? Sign in',
+                    style: AppTextStyle.bodySmall.copyWith(
+                      color: AppPallete.black,
+                    ),
+                  ),
                 ),
               ],
             ),

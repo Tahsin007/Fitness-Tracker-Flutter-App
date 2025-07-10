@@ -1,4 +1,6 @@
 import 'package:fitness_tracker/features/auth/domain/usecases/signup.dart';
+import 'package:fitness_tracker/features/auth/presentation/pages/goals_page1.dart';
+import 'package:fitness_tracker/features/auth/presentation/pages/signup_page2.dart';
 import 'package:fitness_tracker/features/onboarding/presentation/onboard_screen1.dart';
 import 'package:fitness_tracker/features/onboarding/presentation/onboard_screen2.dart';
 import 'package:fitness_tracker/features/onboarding/presentation/onboard_screen3.dart';
@@ -16,7 +18,7 @@ final router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const SignUpPage(),
+      builder: (context, state) => const SignInPage(),
     ),
     GoRoute(
       path: '/signin',
