@@ -1,3 +1,7 @@
+import 'package:fitness_tracker/core/theme/app_pallete.dart';
+import 'package:fitness_tracker/core/theme/app_textstyle.dart';
+import 'package:fitness_tracker/core/widgets/app_button.dart';
+import 'package:fitness_tracker/features/auth/presentation/widgets/auth_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -16,13 +20,13 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-      ),
+      appBar: AppBar(),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is Authenticated) {
@@ -38,35 +42,56 @@ class _SignUpPageState extends State<SignUpPage> {
             return const Center(child: CircularProgressIndicator());
           }
           return Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(26.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                TextField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                ),
-                TextField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<AuthBloc>().add(
-                          SignUpEvent(
-                            email: _emailController.text,
-                            password: _passwordController.text,
-                          ),
-                        );
-                  },
-                  child: const Text('Sign Up'),
-                ),
+                Text("Hey there,",style: AppTextStyle.bodyLarge,),
+                SizedBox(height: 15,),
+                Text("Create an Account",style: AppTextStyle.h2.copyWith(fontWeight: FontWeight.bold),),
+                SizedBox(height: 35,),
+                AuthTextField(label: "First Name", controller: _firstNameController,),
+                SizedBox(height: 20,),
+                AuthTextField(label: "Last Name", controller: _lastNameController),
+                SizedBox(height: 20,),
+                AuthTextField(label: "Email", controller: _emailController,prefixIcon: Icon(Icons.email_outlined),),
+                SizedBox(height: 20,),
+                AuthTextField(label: "Password", controller: _passwordController,prefixIcon: Icon(Icons.lock_outline),),
+                // TextField(
+                //   controller: _emailController,
+                //   decoration: const InputDecoration(labelText: 'Email'),
+                // ),
+                // TextField(
+                //   controller: _passwordController,
+                //   decoration: const InputDecoration(labelText: 'Password'),
+                //   obscureText: true,
+                // ),
+                const SizedBox(height: 70),
+                AppButton(labelText: "Register",onPressed: (){
+                  context.read<AuthBloc>().add(
+                    SignUpEvent(
+                      email: _emailController.text,
+                      password: _passwordController.text,
+                    ),
+                  );
+                },),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     context.read<AuthBloc>().add(
+                //           SignUpEvent(
+                //             email: _emailController.text,
+                //             password: _passwordController.text,
+                //           ),
+                //         );
+                //   },
+                //   child: const Text('Sign Up'),
+                // ),
+                SizedBox(height: 15,),
                 TextButton(
                   onPressed: () {
                     context.go('/signin');
                   },
-                  child: const Text('Already have an account? Sign in'),
+                  child: Text('Already have an account? Sign in',style: AppTextStyle.bodySmall.copyWith(color: AppPallete.black),)
                 ),
               ],
             ),

@@ -1,9 +1,10 @@
-import 'package:fitness_tracker/features/onboarding/pages/onboard_screen1.dart';
-import 'package:fitness_tracker/features/onboarding/pages/onboard_screen2.dart';
-import 'package:fitness_tracker/features/onboarding/pages/onboard_screen3.dart';
-import 'package:fitness_tracker/features/onboarding/pages/onboard_screen4.dart';
+import 'package:fitness_tracker/features/auth/domain/usecases/signup.dart';
+import 'package:fitness_tracker/features/onboarding/presentation/onboard_screen1.dart';
+import 'package:fitness_tracker/features/onboarding/presentation/onboard_screen2.dart';
+import 'package:fitness_tracker/features/onboarding/presentation/onboard_screen3.dart';
+import 'package:fitness_tracker/features/onboarding/presentation/onboard_screen4.dart';
 import 'package:fitness_tracker/features/onboarding/widgets/app_onboard.dart';
-import 'package:fitness_tracker/features/onboarding/pages/welcome_screen1.dart';
+import 'package:fitness_tracker/features/onboarding/presentation/welcome_screen1.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,7 +16,7 @@ final router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const WelcomeScreen1(),
+      builder: (context, state) => const SignUpPage(),
     ),
     GoRoute(
       path: '/signin',

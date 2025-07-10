@@ -6,6 +6,7 @@ class AppPallete {
   static const Color gray1 = Color(0XFF7B6F72);
   static const Color gray2 = Color(0XFFADA4A5);
   static const Color gray3 = Color(0XFFDDDADA);
+  static const Color borderColor = Color(0XFFF7F8F8);
 
   static const Color backgroundColor = Color(0xFFF5F5F5);
   static const Color btnGradient1 = Color(0xFF92A3FD);
