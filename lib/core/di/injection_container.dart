@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fitness_tracker/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:fitness_tracker/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:fitness_tracker/features/auth/domain/repositories/auth_repository.dart';
+import 'package:fitness_tracker/features/auth/domain/usecases/complete_profile.dart';
 import 'package:fitness_tracker/features/auth/domain/usecases/get_current_user.dart';
 import 'package:fitness_tracker/features/auth/domain/usecases/signin.dart';
 import 'package:fitness_tracker/features/auth/domain/usecases/signout.dart';
@@ -20,6 +22,7 @@ Future<void> init() async {
       signUp: sl(),
       signOut: sl(),
       getCurrentUser: sl(),
+      completeProfileUseCase: sl(),
     ),
   );
 
@@ -28,6 +31,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SignUp(sl()));
   sl.registerLazySingleton(() => SignOut(sl()));
   sl.registerLazySingleton(() => GetCurrentUser(sl()));
+  sl.registerLazySingleton(()=> CompleteProfileUseCase(sl()));
 
   // Repositories
   sl.registerLazySingleton<AuthRepository>(
@@ -36,9 +40,10 @@ Future<void> init() async {
 
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(firebaseAuth: sl()),
+    () => AuthRemoteDataSourceImpl(firebaseAuth: sl(), firebaseFirestore: sl()),
   );
 
   // External
   sl.registerLazySingleton(() => FirebaseAuth.instance);
+  sl.registerLazySingleton(() => FirebaseFirestore.instance);
 }

@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => di.sl<AuthBloc>()..add(CheckAuthEvent()),
+      create: (_) => di.sl<AuthBloc>()..add(SignOutEvent()),
       child: MaterialApp.router(
         title: 'Fitness Tracker',
         theme: ThemeData(

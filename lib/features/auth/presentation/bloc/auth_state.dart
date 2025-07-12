@@ -13,6 +13,8 @@ class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
+class AuthSuccess extends AuthState {}
+
 class Authenticated extends AuthState {
   final User user;
 

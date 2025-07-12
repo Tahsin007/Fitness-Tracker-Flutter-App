@@ -35,9 +35,7 @@ class GoalsCard extends StatelessWidget {
         SizedBox(height: 60),
         AppButton(
           labelText: btnText,
-          onPressed: () {
-            onBtnPressed;
-          },
+          onPressed: onBtnPressed,
         ),
         SizedBox(height: 40),
       ],
