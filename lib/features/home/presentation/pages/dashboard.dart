@@ -1,7 +1,15 @@
 import 'package:fitness_tracker/core/theme/app_pallete.dart';
 import 'package:fitness_tracker/core/theme/app_textstyle.dart';
+import 'package:fitness_tracker/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:fitness_tracker/features/auth/presentation/bloc/auth_event.dart';
+import 'package:fitness_tracker/features/auth/presentation/bloc/auth_state.dart';
+import 'package:fitness_tracker/features/auth/presentation/pages/signin_page.dart';
+import 'package:fitness_tracker/features/home/presentation/bloc/dashboard_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math' as math;
+
+import 'package:go_router/go_router.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -13,114 +21,107 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              HeaderWidget(),
-              SizedBox(height: 20),
-              BMIWidget(),
-              SizedBox(height: 20),
-              TodayTargetWidget(),
-              SizedBox(height: 20),
-              ActivityStatusWidget(),
-              SizedBox(height: 20),
-              StatsRowWidget(),
-              SizedBox(height: 20),
-              WorkoutProgressWidget(),
-              SizedBox(height: 20),
-              LatestWorkoutWidget(),
-              SizedBox(height: 100), // Space for bottom navigation
-            ],
+    return BlocProvider(
+      create: (context) => DashboardBloc(authBloc: context.read<AuthBloc>())..add(GetUserData()),
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is Unauthenticated) {
+            context.pushReplacement( '/signin');
+            // context.go('/signin');
+            // Navigator.pushAndRemoveUntil(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => const SignInPage()),
+            //   (route) => false,
+            // );
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Color(0xFFF8F9FA),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HeaderWidget(),
+                  SizedBox(height: 20),
+                  BMIWidget(),
+                  SizedBox(height: 20),
+                  TodayTargetWidget(),
+                  SizedBox(height: 20),
+                  ActivityStatusWidget(),
+                  SizedBox(height: 20),
+                  StatsRowWidget(),
+                  SizedBox(height: 20),
+                  WorkoutProgressWidget(),
+                  SizedBox(height: 20),
+                  LatestWorkoutWidget(),
+                  SizedBox(height: 100), // Space for bottom navigation
+                ],
+              ),
+            ),
           ),
+          bottomNavigationBar: BottomNavigationWidget(),
         ),
       ),
-      bottomNavigationBar: BottomNavigationWidget(),
     );
   }
 }
 
-class FitnessDashboard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              HeaderWidget(),
-              SizedBox(height: 20),
-              BMIWidget(),
-              SizedBox(height: 20),
-              TodayTargetWidget(),
-              SizedBox(height: 20),
-              ActivityStatusWidget(),
-              SizedBox(height: 20),
-              StatsRowWidget(),
-              SizedBox(height: 20),
-              WorkoutProgressWidget(),
-              SizedBox(height: 20),
-              LatestWorkoutWidget(),
-              SizedBox(height: 100), // Space for bottom navigation
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationWidget(),
-    );
-  }
-}
 
 class HeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Welcome Back,',
-              style: TextStyle(fontSize: 16, color: Color(0xFF9CA3AF)),
-            ),
-            Text(
-              'Stefani Wong',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
+    return BlocBuilder<DashboardBloc, DashboardState>(
+      builder: (context, state) {
+        if (state is DashboardLoaded) {
+          print(state.user.email);
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome Back,',
+                    style: TextStyle(fontSize: 16, color: Color(0xFF9CA3AF)),
+                  ),
+                  Text(
+                    state.user.email,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1F2937),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        Container(
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: Offset(0, 2),
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.notifications_outlined,
+                  color: Color(0xFF6B7280),
+                  size: 24,
+                ),
               ),
             ],
-          ),
-          child: Icon(
-            Icons.notifications_outlined,
-            color: Color(0xFF6B7280),
-            size: 24,
-          ),
-        ),
-      ],
+          );
+        }else if(state is DashboardError){
+          return Text(state.message);
+        }
+        return CircularProgressIndicator();
+      },
     );
   }
 }
@@ -726,7 +727,12 @@ class BottomNavigationWidget extends StatelessWidget {
             child: Icon(Icons.add, color: Colors.white),
           ),
           Icon(Icons.camera_alt, color: Color(0xFF6B7280)),
-          Icon(Icons.person, color: Color(0xFF6B7280)),
+          IconButton(
+            icon: Icon(Icons.person, color: Color(0xFF6B7280)),
+            onPressed: () {
+              context.read<AuthBloc>().add(SignOutEvent());
+            },
+          ),
         ],
       ),
     );

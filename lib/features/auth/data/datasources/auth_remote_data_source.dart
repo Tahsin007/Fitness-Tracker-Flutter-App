@@ -9,14 +9,22 @@ abstract class AuthRemoteDataSource {
   Future<UserModel> signUp(UserModel userModel, String password);
   Future<void> signOut();
   Future<UserModel> getCurrentUser();
-  Future<void> completeProfile(String gender, String dob, double weightKg, double heightCm);
+  Future<UserModel> completeProfile(
+    String gender,
+    String dob,
+    double weightKg,
+    double heightCm,
+  );
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final auth.FirebaseAuth firebaseAuth;
   final FirebaseFirestore firebaseFirestore;
 
-  AuthRemoteDataSourceImpl({required this.firebaseAuth, required this.firebaseFirestore});
+  AuthRemoteDataSourceImpl({
+    required this.firebaseAuth,
+    required this.firebaseFirestore,
+  });
 
   @override
   Future<UserModel> signIn(String email, String password) async {
@@ -26,9 +34,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         password: password,
       );
       final user = userCredential.user;
-      final userData = await firebaseFirestore.collection('users').doc(user!.uid).get();
+      final userData = await firebaseFirestore
+          .collection('users')
+          .doc(user!.uid)
+          .get();
       if (user != null) {
-        return UserModel(uid: user.uid, email: user.email!, firstName: userData['firstName'], lastName: userData['lastName'], gender: userData['gender'], dob: userData['dob'], weightKg: userData['weightKg'], heightCm: userData['heightCm']);
+        return UserModel(
+          uid: user.uid,
+          email: user.email!,
+          firstName: userData['firstName'],
+          lastName: userData['lastName'],
+          gender: userData['gender'],
+          dob: userData['dob'],
+          weightKg: userData['weightKg'],
+          heightCm: userData['heightCm'],
+        );
       } else {
         throw ServerException();
       }
@@ -45,7 +65,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         password: password,
       );
       final user = userCredential.user;
-      await firebaseFirestore.collection('users').doc(user!.uid).set(userModel.toMap());
+      await firebaseFirestore
+          .collection('users')
+          .doc(user!.uid)
+          .set(userModel.toMap());
 
       if (user != null) {
         return UserModel(
@@ -74,17 +97,36 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> getCurrentUser() async {
     final user = firebaseAuth.currentUser;
-    return await firebaseFirestore.collection('users').doc(user!.uid).get().then((value) => UserModel.fromMap(value.data()!));
+    return await firebaseFirestore
+        .collection('users')
+        .doc(user!.uid)
+        .get()
+        .then((value) => UserModel.fromMap(value.data()!));
     // if (user != null) {
     //   return UserModel(uid: user.uid, email: user.email!);
     // } else {
     //   throw CacheException();
     // }
   }
-  
+
   @override
-  Future<void> completeProfile(String gender, String dob, double weightKg, double heightCm) async{
+  Future<UserModel> completeProfile(
+    String gender,
+    String dob,
+    double weightKg,
+    double heightCm,
+  ) async {
     final user = firebaseAuth.currentUser;
-    await firebaseFirestore.collection('users').doc(user!.uid).update({'gender': gender, 'dob': dob, 'weightKg': weightKg, 'heightCm': heightCm});
+    await firebaseFirestore.collection('users').doc(user!.uid).update({
+      'gender': gender,
+      'dob': dob,
+      'weightKg': weightKg,
+      'heightCm': heightCm,
+    });
+    return await firebaseFirestore
+        .collection('users')
+        .doc(user.uid)
+        .get()
+        .then((value) => UserModel.fromMap(value.data()!));
   }
 }

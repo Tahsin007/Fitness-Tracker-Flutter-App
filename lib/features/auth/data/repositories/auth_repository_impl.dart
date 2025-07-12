@@ -56,10 +56,10 @@ class AuthRepositoryImpl implements AuthRepository {
   }
   
   @override
-  Future<Either<Failure, void>> completeProfile(String gender, String dob, double weightKg, double heightCm) async{
+  Future<Either<Failure, User>> completeProfile(String gender, String dob, double weightKg, double heightCm) async{
     try {
-      await remoteDataSource.completeProfile(gender, dob, weightKg, heightCm);
-      return Right(null);
+      var user = await remoteDataSource.completeProfile(gender, dob, weightKg, heightCm);
+      return Right(user);
     } on ServerException {
       return Left(ServerFailure());
     }

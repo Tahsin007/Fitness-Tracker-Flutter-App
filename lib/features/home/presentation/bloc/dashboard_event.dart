@@ -6,3 +6,5 @@ sealed class DashboardEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class GetUserData extends DashboardEvent {}

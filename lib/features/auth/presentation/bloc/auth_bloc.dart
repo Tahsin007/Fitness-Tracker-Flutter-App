@@ -74,7 +74,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       result.fold(
         (failure) =>
             emit(const AuthError(message: "Failed in completing the profile")),
-        (_) => emit(AuthSuccess()),
+        (user) => emit(Authenticated(user: user)),
       );
     });
 
