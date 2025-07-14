@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         title: 'Fitness Tracker',
         themeMode: ThemeMode.system,
-        theme: AppTheme.darkTheme,
+        theme: AppTheme.lightTheme,
         routerConfig: router,
       ),
     );

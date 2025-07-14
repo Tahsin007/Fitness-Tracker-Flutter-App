@@ -1,4 +1,3 @@
-
 import 'package:fitness_tracker/core/theme/app_pallete.dart';
 import 'package:fitness_tracker/core/theme/app_textstyle.dart';
 import 'package:flutter/material.dart';
@@ -53,12 +52,28 @@ class AppTheme {
       padding: EdgeInsets.all(8.0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
     ),
+
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppPallete.primaryColor,
+        foregroundColor: AppPallete.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      ),
+    ),
   );
 
   static final darkTheme = ThemeData.dark().copyWith(
     primaryColor: AppPallete.primaryColor,
     scaffoldBackgroundColor: Colors.black,
     brightness: Brightness.dark,
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: Colors.black,
+      indicatorColor: AppPallete.primaryColor,
+      labelTextStyle: MaterialStateProperty.all(
+        AppTextStyle.labelMedium.copyWith(color: AppPallete.white),
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.black,
@@ -106,6 +121,15 @@ class AppTheme {
       secondaryLabelStyle: TextStyle(color: Colors.white70),
       padding: EdgeInsets.all(8.0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
+    ),
+
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppPallete.primaryColor,
+        foregroundColor: AppPallete.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      ),
     ),
   );
 }

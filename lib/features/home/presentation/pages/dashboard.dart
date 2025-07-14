@@ -60,7 +60,6 @@ class _DashboardState extends State<Dashboard> {
             }
           },
           child: Scaffold(
-            backgroundColor: const Color(0xFFF8F9FA),
             body: SafeArea(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
@@ -120,10 +119,7 @@ class HeaderWidget extends StatelessWidget {
                   ),
                   Text(
                     'UID: ${state.user.uid}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF9CA3AF),
-                    ),
+                    style: TextStyle(fontSize: 14, color: Color(0xFF9CA3AF)),
                   ),
                 ],
               ),
@@ -320,7 +316,9 @@ class TodayTargetWidget extends StatelessWidget {
                     child: TargetSettingWidget(
                       targetItems: targetItems,
                       onApply: (targetedItems) {
-                        final dashboardState = context.read<DashboardBloc>().state;
+                        final dashboardState = context
+                            .read<DashboardBloc>()
+                            .state;
                         if (dashboardState is DashboardLoaded) {
                           context.read<DashboardBloc>().add(
                             SetTodayTargetEvent(
