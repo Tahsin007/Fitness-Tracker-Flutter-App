@@ -1,10 +1,14 @@
+import 'package:fitness_tracker/core/di/injection_container.dart';
 import 'package:fitness_tracker/core/theme/app_pallete.dart';
 import 'package:fitness_tracker/core/theme/app_textstyle.dart';
 import 'package:fitness_tracker/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:fitness_tracker/features/auth/presentation/bloc/auth_event.dart';
 import 'package:fitness_tracker/features/auth/presentation/bloc/auth_state.dart';
 import 'package:fitness_tracker/features/auth/presentation/pages/signin_page.dart';
+import 'package:fitness_tracker/features/home/domain/use_cases/today_target_params.dart';
+import 'package:fitness_tracker/features/home/domain/use_cases/today_target_usecase.dart';
 import 'package:fitness_tracker/features/home/presentation/bloc/dashboard_bloc.dart';
+import 'package:fitness_tracker/features/home/presentation/widgets/target_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math' as math;
@@ -21,53 +25,73 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => DashboardBloc(authBloc: context.read<AuthBloc>())..add(GetUserData()),
+    return BlocProvider<DashboardBloc>(
+      create: (context) => DashboardBloc(
+        authBloc: context.read<AuthBloc>(),
+        todayTargetUsecase: sl<TodayTargetUsecase>(),
+      )..add(GetUserData()),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is Unauthenticated) {
-            context.pushReplacement( '/signin');
-            // context.go('/signin');
-            // Navigator.pushAndRemoveUntil(
-            //   context,
-            //   MaterialPageRoute(builder: (context) => const SignInPage()),
-            //   (route) => false,
-            // );
+            context.pushReplacement('/signin');
           }
         },
-        child: Scaffold(
-          backgroundColor: Color(0xFFF8F9FA),
-          body: SafeArea(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  HeaderWidget(),
-                  SizedBox(height: 20),
-                  BMIWidget(),
-                  SizedBox(height: 20),
-                  TodayTargetWidget(),
-                  SizedBox(height: 20),
-                  ActivityStatusWidget(),
-                  SizedBox(height: 20),
-                  StatsRowWidget(),
-                  SizedBox(height: 20),
-                  WorkoutProgressWidget(),
-                  SizedBox(height: 20),
-                  LatestWorkoutWidget(),
-                  SizedBox(height: 100), // Space for bottom navigation
-                ],
+        child: BlocListener<DashboardBloc, DashboardState>(
+          listener: (context, state) {
+            if (state is DashboardLoading) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  const SnackBar(content: Text('Setting target...')),
+                );
+            } else if (state is SetTodayTargetSuccess) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  const SnackBar(content: Text('Target set successfully!')),
+                );
+              Navigator.pop(context); // Dismiss the bottom sheet
+            } else if (state is DashboardError) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(content: Text('Error: ${state.message}')),
+                );
+            }
+          },
+          child: Scaffold(
+            backgroundColor: const Color(0xFFF8F9FA),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    HeaderWidget(),
+                    const SizedBox(height: 20),
+                    BMIWidget(),
+                    const SizedBox(height: 20),
+                    TodayTargetWidget(),
+                    const SizedBox(height: 20),
+                    ActivityStatusWidget(),
+                    const SizedBox(height: 20),
+                    StatsRowWidget(),
+                    const SizedBox(height: 20),
+                    WorkoutProgressWidget(),
+                    const SizedBox(height: 20),
+                    LatestWorkoutWidget(),
+                    const SizedBox(height: 100), // Space for bottom navigation
+                  ],
+                ),
               ),
             ),
+            bottomNavigationBar: BottomNavigationWidget(),
           ),
-          bottomNavigationBar: BottomNavigationWidget(),
         ),
       ),
     );
   }
 }
-
 
 class HeaderWidget extends StatelessWidget {
   @override
@@ -94,6 +118,13 @@ class HeaderWidget extends StatelessWidget {
                       color: Color(0xFF1F2937),
                     ),
                   ),
+                  Text(
+                    'UID: ${state.user.uid}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF9CA3AF),
+                    ),
+                  ),
                 ],
               ),
               Container(
@@ -117,7 +148,7 @@ class HeaderWidget extends StatelessWidget {
               ),
             ],
           );
-        }else if(state is DashboardError){
+        } else if (state is DashboardError) {
           return Text(state.message);
         }
         return CircularProgressIndicator();
@@ -184,7 +215,6 @@ class BMIWidget extends StatelessWidget {
             height: 80,
             child: Stack(
               children: [
-                
                 CircularProgressIndicator(
                   value: 0.7,
                   strokeWidth: 10,
@@ -214,6 +244,40 @@ class BMIWidget extends StatelessWidget {
 }
 
 class TodayTargetWidget extends StatelessWidget {
+  List<TargetItem> targetItems = [
+    TargetItem(
+      title: 'Calories',
+      unit: 'kcal',
+      value: 2000,
+      minValue: 1500,
+      maxValue: 2500,
+      icon: Icons.local_fire_department,
+    ),
+    TargetItem(
+      title: 'Steps',
+      unit: 'steps',
+      value: 10000,
+      minValue: 8000,
+      maxValue: 12000,
+      icon: Icons.directions_walk,
+    ),
+    TargetItem(
+      title: 'Water',
+      unit: 'litres',
+      value: 5,
+      minValue: 1,
+      maxValue: 8,
+      icon: Icons.water_drop,
+    ),
+    TargetItem(
+      title: 'Sleep',
+      unit: 'hours',
+      value: 8,
+      minValue: 6,
+      maxValue: 10,
+      icon: Icons.bedtime,
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -234,17 +298,53 @@ class TodayTargetWidget extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
             decoration: BoxDecoration(
-              color: Color(0xFF7FB3FF),
+              color: AppPallete.primaryColor,
               borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: Offset(0, 2),
+                ),
+              ],
             ),
-            child: Text(
-              'Check',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+
+            child: TextButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => BlocProvider.value(
+                    value: context.read<DashboardBloc>(),
+                    child: TargetSettingWidget(
+                      targetItems: targetItems,
+                      onApply: (targetedItems) {
+                        final dashboardState = context.read<DashboardBloc>().state;
+                        if (dashboardState is DashboardLoaded) {
+                          context.read<DashboardBloc>().add(
+                            SetTodayTargetEvent(
+                              userId: dashboardState.user.uid,
+                              todayTargetParams: TodayTargetParams(
+                                userId: dashboardState.user.uid,
+                                targetItems: targetedItems,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      onCancel: () => {Navigator.pop(context)},
+                    ),
+                  ),
+                );
+              },
+              child: Text(
+                'Check',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

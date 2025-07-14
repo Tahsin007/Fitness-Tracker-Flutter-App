@@ -27,9 +27,6 @@ class HomeRepositoriesImpl extends HomeRepository{
       final result = await homeRemoteDatasources.setTodayTarget(dailyRecord, uid);
       return Right(result);
     }on ServerException {
-
-
-      
       return Left(ServerFailure());
     }
   }

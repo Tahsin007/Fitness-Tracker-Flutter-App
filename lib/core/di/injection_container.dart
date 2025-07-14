@@ -12,11 +12,14 @@ import 'package:fitness_tracker/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:fitness_tracker/features/home/data/datasources/home_remote_datasources.dart';
 import 'package:fitness_tracker/features/home/data/repositories/home_repositories_impl.dart';
 import 'package:fitness_tracker/features/home/domain/repositories/home_repository.dart';
+import 'package:fitness_tracker/features/home/domain/use_cases/today_target_usecase.dart';
+import 'package:fitness_tracker/features/home/presentation/bloc/dashboard_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // await sl.isReady<SharedPreferences>();
   // Blocs
   sl.registerFactory(
     () => AuthBloc(
@@ -28,12 +31,15 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerFactory( () => DashboardBloc(authBloc: sl(),todayTargetUsecase: sl()));
+
   // Use cases
   sl.registerLazySingleton(() => SignIn(sl()));
   sl.registerLazySingleton(() => SignUp(sl()));
   sl.registerLazySingleton(() => SignOut(sl()));
   sl.registerLazySingleton(() => GetCurrentUser(sl()));
   sl.registerLazySingleton(() => CompleteProfileUseCase(sl()));
+  sl.registerLazySingleton(() => TodayTargetUsecase(homeRepository: sl()));
 
   // Repositories
   sl.registerLazySingleton<AuthRepository>(

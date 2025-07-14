@@ -2,7 +2,7 @@
 import 'dart:convert';
 
 class DailyRecord {
-  final DateTime date;
+  final String date;
   final int stepsTarget;
   final double waterTargetLitres;
   final int sleepTargetHours;
@@ -25,7 +25,7 @@ class DailyRecord {
   });
 
   DailyRecord copyWith({
-    DateTime? date,
+    String? date,
     int? stepsTarget,
     double? waterTargetLitres,
     int? sleepTargetHours,
@@ -50,7 +50,7 @@ class DailyRecord {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'date': date.millisecondsSinceEpoch,
+      'date': date,
       'stepsTarget': stepsTarget,
       'waterTargetLitres': waterTargetLitres,
       'sleepTargetHours': sleepTargetHours,
@@ -64,7 +64,7 @@ class DailyRecord {
 
   factory DailyRecord.fromMap(Map<String, dynamic> map) {
     return DailyRecord(
-      date: DateTime.fromMillisecondsSinceEpoch(map['date'] as int),
+      date: map['date'] as String,
       stepsTarget: map['stepsTarget'] as int,
       waterTargetLitres: map['waterTargetLitres'] as double,
       sleepTargetHours: map['sleepTargetHours'] as int,

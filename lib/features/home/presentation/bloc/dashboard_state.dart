@@ -20,6 +20,11 @@ final class DashboardLoaded extends DashboardState {
   List<Object> get props => [user];
 }
 
+final class SetTodayTargetSuccess extends DashboardState{
+  @override
+  List<Object> get props => [];
+}
+
 final class DashboardError extends DashboardState {
   final String message;
 

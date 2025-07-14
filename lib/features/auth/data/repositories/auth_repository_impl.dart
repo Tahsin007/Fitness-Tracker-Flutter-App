@@ -2,7 +2,6 @@ import 'dart:ffi';
 
 import 'package:dartz/dartz.dart';
 import 'package:fitness_tracker/features/auth/data/models/user_model.dart';
-
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/user.dart';

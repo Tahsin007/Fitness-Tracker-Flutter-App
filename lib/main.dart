@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fitness_tracker/core/theme/app_theme.dart';
 import 'package:fitness_tracker/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +14,8 @@ void main() async {
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
   );
-  await di.init();
+  di.init();
+  // await di.sl.allReady();
   runApp(const MyApp());
 }
 
@@ -26,9 +28,8 @@ class MyApp extends StatelessWidget {
       create: (_) => di.sl<AuthBloc>()..add(SignOutEvent()),
       child: MaterialApp.router(
         title: 'Fitness Tracker',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
+        themeMode: ThemeMode.system,
+        theme: AppTheme.darkTheme,
         routerConfig: router,
       ),
     );
