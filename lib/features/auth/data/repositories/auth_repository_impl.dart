@@ -1,5 +1,7 @@
-import 'package:dartz/dartz.dart';
+import 'dart:ffi';
 
+import 'package:dartz/dartz.dart';
+import 'package:fitness_tracker/features/auth/data/models/user_model.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/user.dart';
@@ -22,9 +24,10 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, User>> signUp(String email, String password) async {
+  Future<Either<Failure, User>> signUp(String firstname, String lastName, String email, String password) async {
     try {
-      final user = await remoteDataSource.signUp(email, password);
+      final userModel = UserModel(email: email, firstName: firstname, lastName: lastName, uid: '', gender: '', dob: '', weightKg: 0.0, heightCm: 0.0);
+      final user = await remoteDataSource.signUp(userModel, password);
       return Right(user);
     } on ServerException {
       return Left(ServerFailure());
@@ -48,6 +51,16 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(user);
     } on CacheException {
       return Left(CacheFailure());
+    }
+  }
+  
+  @override
+  Future<Either<Failure, User>> completeProfile(String gender, String dob, double weightKg, double heightCm) async{
+    try {
+      var user = await remoteDataSource.completeProfile(gender, dob, weightKg, heightCm);
+      return Right(user);
+    } on ServerException {
+      return Left(ServerFailure());
     }
   }
 }

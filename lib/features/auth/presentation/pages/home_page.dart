@@ -30,9 +30,10 @@ class HomePage extends StatelessWidget {
           }
         },
         child: const Center(
-          child: Text('Welcome!'),
+          child: Text('Welcome!',
         ),
       ),
+    ),
     );
   }
 }
